@@ -1,0 +1,68 @@
+﻿
+@model IEnumerable<Petty.Models.BooksModel>
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>View</title>
+</head>
+<body>
+<p>
+    <a asp-controller="BookList" asp-action="Create">Создать</a>
+</p>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @Html.DisplayNameFor(model => model.Book_Title)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Book_Description)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Book_Author)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Book_Amount)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Book_Price)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Book_Title)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Book_Description)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Book_Author)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Book_Amount)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.Book_Price)
+            </td>
+            <td>
+                <a asp-controller="BookList" asp-action="Edit" asp-route-id="@item.Book_Id">Редактировать</a> |
+                <a asp-controller="BookList" asp-action="Details" asp-route-id="@item.Book_Id">Подробно</a> |
+                <a asp-controller="BookList" asp-action="Delete" asp-route-id="@item.Book_Id">Удалить</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>
+</body>
+</html>

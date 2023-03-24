@@ -1,0 +1,40 @@
+﻿@model IEnumerable<Petty.Models.BooksModel>
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>View</title>
+</head>
+<body>
+    <p>
+        @foreach (var item in Model)
+            {
+        <form method="post" asp-action="SaveChanges">
+            
+                <label asp-for="@modelitem => item.Book_Title"></label>
+                <input type="text" asp-for="Book_Title" name="Book_Title" required><br><br>
+                <label asp-for="Book_Description"></label>
+                <input type="text" asp-for="@Model => Book_Description" name="Book_Description" required><br><br>
+
+                <label asp-for="Book_Author"></label>
+                <input type="text" asp-for="Book_Author" name="Book_Author" required><br><br>
+
+                <label asp-for="Book_Amount"></label>
+                <input type="number" asp-for="Book_Amount" name="Book_Amount" required><br><br>
+
+                <label asp-for="Book_Price"></label>
+                <input type="number" asp-for="Book_Price" name="Book_Price" required><br><br>
+
+                <input type="hidden" asp-for="Book_Id" />
+
+                <button type="submit" name="Save">Save</button>
+             
+        </form>
+            }
+</body>
+</html>
