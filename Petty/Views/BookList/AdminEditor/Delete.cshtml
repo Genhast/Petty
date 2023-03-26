@@ -1,0 +1,36 @@
+﻿@model Petty.Models.BooksModel
+
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>View</title>
+</head>
+<body>
+    <p>
+        <form asp-controller="BookList" asp-action="DeleteRecord" method="post">
+                <input type="hidden" asp-for="@Model.Book_Id" value="@Context.Request.RouteValues["id"]" />
+                <label>Вы уверены, что хотите удалить эту запись?</label>
+
+                <p>
+                    <label asp-for="@Model.Book_Title" name="Book_Title"></label>
+
+                    <label asp-for="@Model.Book_Description" name="Book_Description"></label>
+
+                    <label asp-for="@Model.Book_Author" name="Book_Author"></label>
+
+                    <label asp-for="@Model.Book_Amount" name="Book_Amount"></label>
+
+                    <label asp-for="@Model.Book_Price" name="Book_Price"></label>
+                </p>
+
+            <button type="submit" class="btn btn-danger">Delete</button>
+        </form>
+    </p>
+</body>
+</html>

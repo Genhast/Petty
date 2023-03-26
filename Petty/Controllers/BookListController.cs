@@ -26,23 +26,10 @@ namespace Petty.Controllers
             return View(Books);
         }
         [HttpGet]
-        public IActionResult Edit(Models.BooksModel book)
+        public IActionResult Edit()
         {
-            
-            // Создание объекта модели представления
-            var model = new BooksModel
-                {
-
-                    Book_Id = book.Book_Id,
-                    Book_Title = book.Book_Title,
-                    Book_Description = book.Book_Description,
-                    Book_Author = book.Book_Author,
-                    Book_Amount = book.Book_Amount,
-                    Book_Price = book.Book_Price
-                };
-
-                // Передача объекта модели представления в представление
-                return View("~/Views/BookList/AdminEditor/Edit.cshtml", model);
+            var model = new BooksModel();
+            return View("~/Views/BookList/AdminEditor/Edit.cshtml", model);
         }
 
         [HttpPost]
@@ -66,20 +53,55 @@ namespace Petty.Controllers
                 // Перенаправляем пользователя на страницу со списком книг
                 return RedirectToAction("AdminList");
             }
-
-            // Если модель не прошла валидацию, возвращаем представление с ошибками валидации
             return View(model);
-            //return View("~/Views/BookList/AdminEditor/Edit.cshtml");
         }
-        public IActionResult Delete()
+        public IActionResult Delete([FromRoute] int id)
         {
-            var Books = _dbContext.BooksList.ToList();
-            return View();
+            var model = new Models.BooksModel();
+            model.Book_Id = id;
+
+            if (ModelState.IsValid)
+            {
+                var Books = _dbContext.BooksList.Single(b => b.Book_Id == model.Book_Id);
+
+                Books.Book_Title = model.Book_Title;
+                Books.Book_Description = model.Book_Description;
+                Books.Book_Author = model.Book_Author;
+                Books.Book_Amount = model.Book_Amount;
+                Books.Book_Price = model.Book_Price;
+
+                return View("~/Views/BookList/AdminEditor/Delete.cshtml", Books);
+            }
+            return View("Index");
+        }
+        [HttpPost]
+        public IActionResult DeleteRecord(Models.BooksModel model)
+        {
+            if (model.Book_Id != null)
+            {
+                // Получаем объект из базы данных по Book_Id
+                var book = _dbContext.BooksList.Single(b => b.Book_Id == model.Book_Id);
+
+                _dbContext.BooksList.Remove(book);
+                _dbContext.SaveChanges();
+
+                // Перенаправляем пользователя на страницу со списком книг
+                return RedirectToAction("AdminList");
+            }
+            return Content("Invalid id"); 
         }
         public IActionResult Create()
         {
-            var Books = _dbContext.BooksList.ToList();
-            return View();
+            var Books = new Models.BooksModel();
+            return View("~/Views/BookList/AdminEditor/Create.cshtml", Books);
+        }
+        [HttpPost]
+        public IActionResult CreateRecord(Models.BooksModel model)
+        {
+            _dbContext.BooksList.Add(model);
+            _dbContext.SaveChanges();
+
+            return RedirectToAction("AdminList");
         }
         public IActionResult Details() 
         {

@@ -12,7 +12,7 @@
 </head>
 <body>
     <p>
-        <form asp-controller="BookList" asp-action="SaveChanges" method="post">
+        <form asp-controller="BookList" asp-action="CreateRecord" method="post">
 
             <label asp-for="Book_Title">Название</label>
             <input type="text" asp-for="Book_Title" name="Book_Title" required><br><br>
@@ -29,7 +29,7 @@
             <label asp-for="Book_Price">Цена</label>
             <input type="number" asp-for="Book_Price" name="Book_Price" required><br><br>
 
-            <input type="hidden" asp-for="Book_Id" value="@Context.Request.RouteValues["id"]" />
+            <input type="hidden" asp-for="Book_Id" />
 
             <button type="submit" name="Save">Save</button>
 

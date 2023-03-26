@@ -1,0 +1,31 @@
+﻿@model Petty.Models.UsersModel
+@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>View</title>
+</head>
+<body>
+    <p>
+        <form asp-controller="UserAuth" asp-action="CreateUser" method="post">
+
+            <label asp-for="User_Name">Имя пользователя</label>
+            <input type="text" asp-for="User_Name" name="User_Name" required><br><br>
+
+            <label asp-for="User_Email">Почта</label>
+            <input type="text" asp-for="User_Email" name="User_Email" required><br><br>
+
+            <label asp-for="User_Password">Пароль</label>
+            <input type="text" asp-for="User_Password" name="User_Password" required><br><br>
+
+            <button type="submit" name="Save">Создать пользователя</button>
+
+        </form>
+    </p>
+</body>
+</html>
