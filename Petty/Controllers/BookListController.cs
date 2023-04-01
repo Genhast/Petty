@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Petty.Models;
 using Petty.Models.ContextData;
@@ -8,44 +10,51 @@ namespace Petty.Controllers
     public class BookListController : Controller
     {
         private readonly BookStoreDbContext _dbContext;
+        
 
         public BookListController(BookStoreDbContext dbContext)
         {
             _dbContext = dbContext;
         }
+        public bool IsAdminCheck()
+        {
+            bool status;
+            string userName = HttpContext.User.Identity.Name;
+            var isAdmin = _dbContext.Users.FirstOrDefault(u => u.User_Name == userName && u.User_IsAdmin == "Yes");
 
+            status = isAdmin == null ? false : true;
+            return status;
+        }
+        [Authorize]
+        [HttpGet]
         public IActionResult AdminList()
         {
-            var Books = _dbContext.BooksList.ToList();
-            return View(Books);
+            if (IsAdminCheck() == true)
+            {
+                var Books = _dbContext.BooksList.ToList();
+                return View(Books);
+            }
+            else
+            {
+                return StatusCode(403);
+            }
         }
-
+        [Authorize]
         public IActionResult ClientList() 
         {
             var Books = _dbContext.BooksList.ToList();
             return View(Books);
         }
         [HttpGet]
-        public IActionResult Edit(Models.BooksModel book)
+        [Authorize]
+        public IActionResult Edit()
         {
-            
-            // Создание объекта модели представления
-            var model = new BooksModel
-                {
-
-                    Book_Id = book.Book_Id,
-                    Book_Title = book.Book_Title,
-                    Book_Description = book.Book_Description,
-                    Book_Author = book.Book_Author,
-                    Book_Amount = book.Book_Amount,
-                    Book_Price = book.Book_Price
-                };
-
-                // Передача объекта модели представления в представление
-                return View("~/Views/BookList/AdminEditor/Edit.cshtml", model);
+            var model = new BooksModel();
+            return View("~/Views/BookList/AdminEditor/Edit.cshtml", model);
         }
 
         [HttpPost]
+        [Authorize]
         public IActionResult SaveChanges(Models.BooksModel model)
         {
             if (ModelState.IsValid)
@@ -66,26 +75,61 @@ namespace Petty.Controllers
                 // Перенаправляем пользователя на страницу со списком книг
                 return RedirectToAction("AdminList");
             }
-
-            // Если модель не прошла валидацию, возвращаем представление с ошибками валидации
             return View(model);
-            //return View("~/Views/BookList/AdminEditor/Edit.cshtml");
         }
-        public IActionResult Delete()
+        [Authorize]
+        public IActionResult Delete([FromRoute] int id)
         {
-            var Books = _dbContext.BooksList.ToList();
-            return View();
+            var model = new Models.BooksModel();
+            model.Book_Id = id;
+
+            if (ModelState.IsValid)
+            {
+                var Books = _dbContext.BooksList.Single(b => b.Book_Id == model.Book_Id);
+
+                return View("~/Views/BookList/AdminEditor/Delete.cshtml", Books);
+            }
+            return View("Index");
         }
+        [HttpPost]
+        [Authorize]
+        public IActionResult DeleteRecord(Models.BooksModel model)
+        {
+            if (model.Book_Id != null)
+            {
+                // Получаем объект из базы данных по Book_Id
+                var book = _dbContext.BooksList.Single(b => b.Book_Id == model.Book_Id);
+
+                _dbContext.BooksList.Remove(book);
+                _dbContext.SaveChanges();
+
+                // Перенаправляем пользователя на страницу со списком книг
+                return RedirectToAction("AdminList");
+            }
+            return Content("Invalid id"); 
+        }
+        [Authorize]
         public IActionResult Create()
         {
-            var Books = _dbContext.BooksList.ToList();
-            return View();
+            var Books = new Models.BooksModel();
+            return View("~/Views/BookList/AdminEditor/Create.cshtml", Books);
         }
+        [HttpPost]
+        [Authorize]
+        public IActionResult CreateRecord(Models.BooksModel model)
+        {
+            _dbContext.BooksList.Add(model);
+            _dbContext.SaveChanges();
+
+            return RedirectToAction("AdminList");
+        }
+        [Authorize]
         public IActionResult Details() 
         {
             var Books = _dbContext.BooksList.ToList();
             return View();
         }
+        [Authorize]
         public IActionResult AddToCart()
         {
             var Books = _dbContext.BooksList.ToList();

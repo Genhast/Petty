@@ -1,5 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Petty.Models.ContextData;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authentication.Cookies;
 
 namespace Petty
 {
@@ -11,14 +13,14 @@ namespace Petty
 
             builder.Services.AddControllers();
 
-            // получаем строку подключени€ из файла конфигурации
             string connection = builder.Configuration.GetConnectionString("DefaultConnection");
 
-            // добавл€ем контекст ApplicationContext в качестве сервиса в приложение
             builder.Services.AddDbContext<BookStoreDbContext>(options => options.UseSqlServer(connection));
 
-            // добавл€ем сервисы в контейнер
             builder.Services.AddControllersWithViews();
+
+            builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
+    .AddCookie(options => options.LoginPath = "/UserAuth/UserAuth");
 
             var app = builder.Build();
 
@@ -35,7 +37,9 @@ namespace Petty
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
+           
 
             app.MapControllerRoute(name: "default", pattern: "{controller=Home}/{action=Index}/{id?}");
             app.MapControllerRoute(name: "AList", pattern: "{controller=BookListController}/{action=AdminList}");
@@ -46,6 +50,8 @@ namespace Petty
             app.MapControllerRoute(name: "ACreate", pattern: "{controller=BookListController}/{action=Create}");
             app.MapControllerRoute(name: "CAddToCart", pattern: "{controller=BookListController}/{action=AddToCart}");
             app.MapControllerRoute(name: "SaveChanges", pattern: "{controller=BookListController}/{action=SaveChanges}");
+            app.MapControllerRoute(name: "LogIn", pattern: "{controller=UserAuthController}/{action=UserAuth}");
+            app.MapControllerRoute(name: "Registration", pattern: "{controller=UserAuthController}/{action=UserReg}");
 
             app.Run();
         }

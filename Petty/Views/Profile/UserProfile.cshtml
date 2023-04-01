@@ -1,0 +1,15 @@
+﻿@model Petty.Models.UsersModel
+
+@{
+    ViewData["Title"] = "Profile";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<h1>Мой профиль</h1>
+
+<p><strong>Имя пользователя:</strong> @Model.User_Name</p>
+<p><strong>Почта:</strong> @Model.User_Email</p>
+
+<form asp-controller="UserAuth" asp-action="Logout" method="post">
+    <button type="submit" class="btn btn-primary">Выйти</button>
+</form>

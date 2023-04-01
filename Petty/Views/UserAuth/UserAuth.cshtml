@@ -1,0 +1,33 @@
+﻿@model Petty.Models.UsersModel
+@{
+    ViewData["Title"] = "Admin List";
+    Layout = "~/Views/Shared/_Layout.cshtml";
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta name="viewport" content="width=device-width" />
+    <title>View</title>
+</head>
+<body>
+    <p>
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+        }
+        <form asp-controller="UserAuth" asp-action="CheckUser" method="post">
+
+            <label asp-for="User_Name">Имя пользователя</label>
+            <input type="text" asp-for="User_Name" name="User_Name" required><br><br>
+
+            <label asp-for="User_Password">Пароль</label>
+            <input type="text" asp-for="User_Password" name="User_Password" required><br><br>
+
+            <button type="submit" name="Submit">Войти</button>
+
+        </form>
+    </p>
+</body>
+</html>
