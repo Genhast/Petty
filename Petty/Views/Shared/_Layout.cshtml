@@ -25,12 +25,28 @@
                         <li class="nav-item">
                             <a class="nav-link text-dark" asp-area="" asp-controller="Home" asp-action="Privacy">Privacy</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="BookList" asp-action="AdminList">Редактор склада</a>
-                        </li>
-                        <li class="nav-item">
-                            <a class="nav-link text-dark" asp-area="" asp-controller="UserAuth" asp-action="UserReg">Зарегистрироваться</a>
-                        </li>
+
+                        @if (User.Identity.IsAuthenticated)
+                        {
+                           // if (IsAdminCheck() == true)
+                            //{
+                                <li class="nav-item">
+                                    <a class="nav-link text-dark" asp-area="" asp-controller="BookList" asp-action="AdminList">Редактор склада</a>
+                                </li>
+                           // }
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="Profile" asp-action="UserProfile">Мой профиль</a>
+                            </li>
+                        }
+                        else
+                        {
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="UserAuth" asp-action="UserReg">Зарегистрироваться</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link text-dark" asp-controller="UserAuth" asp-action="UserAuth">Войти</a>
+                            </li>
+                        }
                     </ul>
                 </div>
             </div>

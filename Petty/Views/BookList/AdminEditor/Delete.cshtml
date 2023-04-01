@@ -1,7 +1,8 @@
 ﻿@model Petty.Models.BooksModel
 
 @{
-    Layout = null;
+    ViewData["Title"] = "Delete";
+    Layout = "~/Views/Shared/_Layout.cshtml";
 }
 
 <!DOCTYPE html>
@@ -14,22 +15,35 @@
 <body>
     <p>
         <form asp-controller="BookList" asp-action="DeleteRecord" method="post">
-                <input type="hidden" asp-for="@Model.Book_Id" value="@Context.Request.RouteValues["id"]" />
-                <label>Вы уверены, что хотите удалить эту запись?</label>
+            <input type="hidden" asp-for="@Model.Book_Id" value="@Context.Request.RouteValues["id"]" />
+            <label>Вы уверены, что хотите удалить эту запись?</label>
+            <p>
+                <label>Название</label>
 
-                <p>
-                    <label asp-for="@Model.Book_Title" name="Book_Title"></label>
+                <label>Описание</label>
 
-                    <label asp-for="@Model.Book_Description" name="Book_Description"></label>
+                <label>Автор</label>
 
-                    <label asp-for="@Model.Book_Author" name="Book_Author"></label>
+                <label>Количество</label>
 
-                    <label asp-for="@Model.Book_Amount" name="Book_Amount"></label>
+                <label>Цена</label>
+            </p>
+            <p>
+                <label asp-for="@Model.Book_Title" name="Book_Title">@Model.Book_Title</label>
 
-                    <label asp-for="@Model.Book_Price" name="Book_Price"></label>
-                </p>
+                <label asp-for="@Model.Book_Description" name="Book_Description">@Model.Book_Description</label>
+
+                <label asp-for="@Model.Book_Author" name="Book_Author">@Model.Book_Author</label>
+
+                <label asp-for="@Model.Book_Amount" name="Book_Amount">@Model.Book_Amount</label>
+
+                <label asp-for="@Model.Book_Price" name="Book_Price">@Model.Book_Price</label>
+            </p>
 
             <button type="submit" class="btn btn-danger">Delete</button>
+        </form>
+        <form asp-controller="BookList" asp-action="AdminList" method="get">
+            <button type="submit" class="btn btn-primary">Выйти</button>
         </form>
     </p>
 </body>

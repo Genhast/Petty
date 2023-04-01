@@ -1,4 +1,6 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Petty.Models;
 using Petty.Models.ContextData;
@@ -8,24 +10,43 @@ namespace Petty.Controllers
     public class BookListController : Controller
     {
         private readonly BookStoreDbContext _dbContext;
+        
 
         public BookListController(BookStoreDbContext dbContext)
         {
             _dbContext = dbContext;
         }
+        public bool IsAdminCheck()
+        {
+            bool status;
+            string userName = HttpContext.User.Identity.Name;
+            var isAdmin = _dbContext.Users.FirstOrDefault(u => u.User_Name == userName && u.User_IsAdmin == "Yes");
 
+            status = isAdmin == null ? false : true;
+            return status;
+        }
+        [Authorize]
+        [HttpGet]
         public IActionResult AdminList()
         {
-            var Books = _dbContext.BooksList.ToList();
-            return View(Books);
+            if (IsAdminCheck() == true)
+            {
+                var Books = _dbContext.BooksList.ToList();
+                return View(Books);
+            }
+            else
+            {
+                return StatusCode(403);
+            }
         }
-
+        [Authorize]
         public IActionResult ClientList() 
         {
             var Books = _dbContext.BooksList.ToList();
             return View(Books);
         }
         [HttpGet]
+        [Authorize]
         public IActionResult Edit()
         {
             var model = new BooksModel();
@@ -33,6 +54,7 @@ namespace Petty.Controllers
         }
 
         [HttpPost]
+        [Authorize]
         public IActionResult SaveChanges(Models.BooksModel model)
         {
             if (ModelState.IsValid)
@@ -55,6 +77,7 @@ namespace Petty.Controllers
             }
             return View(model);
         }
+        [Authorize]
         public IActionResult Delete([FromRoute] int id)
         {
             var model = new Models.BooksModel();
@@ -64,17 +87,12 @@ namespace Petty.Controllers
             {
                 var Books = _dbContext.BooksList.Single(b => b.Book_Id == model.Book_Id);
 
-                Books.Book_Title = model.Book_Title;
-                Books.Book_Description = model.Book_Description;
-                Books.Book_Author = model.Book_Author;
-                Books.Book_Amount = model.Book_Amount;
-                Books.Book_Price = model.Book_Price;
-
                 return View("~/Views/BookList/AdminEditor/Delete.cshtml", Books);
             }
             return View("Index");
         }
         [HttpPost]
+        [Authorize]
         public IActionResult DeleteRecord(Models.BooksModel model)
         {
             if (model.Book_Id != null)
@@ -90,12 +108,14 @@ namespace Petty.Controllers
             }
             return Content("Invalid id"); 
         }
+        [Authorize]
         public IActionResult Create()
         {
             var Books = new Models.BooksModel();
             return View("~/Views/BookList/AdminEditor/Create.cshtml", Books);
         }
         [HttpPost]
+        [Authorize]
         public IActionResult CreateRecord(Models.BooksModel model)
         {
             _dbContext.BooksList.Add(model);
@@ -103,11 +123,13 @@ namespace Petty.Controllers
 
             return RedirectToAction("AdminList");
         }
+        [Authorize]
         public IActionResult Details() 
         {
             var Books = _dbContext.BooksList.ToList();
             return View();
         }
+        [Authorize]
         public IActionResult AddToCart()
         {
             var Books = _dbContext.BooksList.ToList();

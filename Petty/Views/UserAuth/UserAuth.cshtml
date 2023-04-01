@@ -13,18 +13,19 @@
 </head>
 <body>
     <p>
-        <form asp-controller="UserAuth" asp-action="CreateUser" method="post">
+        @if (TempData["ErrorMessage"] != null)
+        {
+            <div class="alert alert-danger">@TempData["ErrorMessage"]</div>
+        }
+        <form asp-controller="UserAuth" asp-action="CheckUser" method="post">
 
             <label asp-for="User_Name">Имя пользователя</label>
             <input type="text" asp-for="User_Name" name="User_Name" required><br><br>
 
-            <label asp-for="User_Email">Почта</label>
-            <input type="text" asp-for="User_Email" name="User_Email" required><br><br>
-
             <label asp-for="User_Password">Пароль</label>
             <input type="text" asp-for="User_Password" name="User_Password" required><br><br>
 
-            <button type="submit" name="Save">Создать пользователя</button>
+            <button type="submit" name="Submit">Войти</button>
 
         </form>
     </p>
